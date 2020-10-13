@@ -5,12 +5,15 @@ import requests
 
 
 # Optional logging
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.INFO)
 
+# Load configuration file
 config = json.load(open(sys.argv[1]))
 
+# Put key/secret into JSON object
 authPayload = {"accessKeyId" : config['accessKeyId'], "accessKeySecret" : config['accessKeySecret']}
 
+# Get authentication token from NiC
 logging.info("Sending authentication request to NiC")
 logging.info(authPayload)
 authRequest = requests.post(
@@ -21,12 +24,27 @@ authRequest = requests.post(
 logging.info("Response:")
 logging.info(authRequest.content)
 
+# Convert auth response to json for parsing
 logging.info("Converting response to json for parsing")
-jsonifiedAuth = json.loads((authRequest.content).decode("utf-8"))
+authRequest = json.loads((authRequest.content).decode("utf-8"))
 
+# Use auth token to get list of active contacts
 logging.info("Get current active contacts")
 activeContacts = requests.get(
     "https://api-na1.niceincontact.com/incontactapi/services/v17.0/contacts/active",
-    headers={'Authorization': 'Bearer ' + jsonifiedAuth['id_token']}
+    headers={'Authorization': 'Bearer ' + authRequest['id_token']}
 )
 
+# Convert response to json
+logging.info("Coverting contact list to JSON")
+activeContacts = json.loads((activeContacts.content).decode("utf-8"))
+logging.info("The following contacts were retrieved")
+logging.info(activeContacts)
+
+for contact in activeContacts:
+    if contact["campaignId"] == '2577248':
+        print("found e-mail contact:")
+        print(contact["contactId"])
+    if contact["campaignId"] == '2576991':
+        print("found chat contact:")
+        print(contact["contactId"])
