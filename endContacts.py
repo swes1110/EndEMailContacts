@@ -5,7 +5,7 @@ import requests
 
 
 # Optional logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 
 # Load configuration file
 config = json.load(open(sys.argv[1]))
@@ -20,9 +20,7 @@ authRequest = requests.post(
     "https://na1.nice-incontact.com/authentication/v1/token/access-key",
     json=authPayload
 )
-
-logging.info("Response:")
-logging.info(authRequest.content)
+logging.info("Response: " + str(authRequest.content))
 
 # Convert auth response to json for parsing
 logging.info("Converting response to json for parsing")
@@ -38,13 +36,15 @@ activeContacts = requests.get(
 # Convert response to json
 logging.info("Coverting contact list to JSON")
 activeContacts = json.loads((activeContacts.content).decode("utf-8"))
-logging.info("The following contacts were retrieved")
-logging.info(activeContacts)
+logging.info("The following contacts were retrieved: " + str(activeContacts))
 
-for contact in activeContacts:
-    if contact["campaignId"] == '2577248':
-        print("found e-mail contact:")
-        print(contact["contactId"])
-    if contact["campaignId"] == '2576991':
-        print("found chat contact:")
-        print(contact["contactId"])
+# Loop thru response and find e-mail contacts
+for contact in activeContacts["resultSet"]["activeContacts"]:
+    if contact["campaignId"] == 2577248:
+        logging.info("Found e-mail contact: " + str(contact["contactId"]))
+        print("Ending e-mail contact: " + str(contact["contactId"]))
+        emailContact = requests.post(
+            "https://api-na1.niceincontact.com/incontactapi/services/v17.0/contacts/" + str(contact["contactId"]) + "/end",
+            headers={'Authorization': 'Bearer ' + authRequest['id_token']}
+        )
+        logging.info("Contact " + str(contact["contactId"]) + " ended successfully.")
