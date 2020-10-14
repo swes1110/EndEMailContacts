@@ -40,7 +40,7 @@ logging.info("The following contacts were retrieved: " + str(activeContacts))
 
 # Loop thru response and find e-mail contacts
 for contact in activeContacts["resultSet"]["activeContacts"]:
-    if contact["campaignId"] == 2577248:
+    if contact["campaignId"] == config['campaignId']:
         logging.info("Found e-mail contact: " + str(contact["contactId"]))
         print("Ending e-mail contact: " + str(contact["contactId"]))
         emailContact = requests.post(

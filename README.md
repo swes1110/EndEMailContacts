@@ -1,6 +1,6 @@
-# CleanO365Conversations
+# EndEmailContacts
 
-CleanUnifiedGroup is a simple python script to delete all of the conversations from a given Unified Group (O365 Group).
+EndEmailContacts is a simple python script to end all contacts matching a certain "campaignId" in Nice InContact. I developed specifically for e-mail contacts but this would work for any active contacts simply by updating the campaignId in the configuration file.
 
 ## Dependencies
 
@@ -8,27 +8,26 @@ Python 3.x
 
 ##### The following modules are required
 
-* MSAL `v1.5.0`
+* Requests
 ```
-pip install msal
+pip install requests
 ```
 
 *Listed versions are validated with this application, other's may work but have not been tested*
 
 ## Configuration
 
-### Azure AD Configuration
+### NiC Configuration
 
-To utilize this application you must configure an enterprise application registration with the following settings:
-1. Application must be configured with redirect URI's set to "Mobile and desktop applications" and not the default of "web" for public client authentication ![AzurePortalScreenshot](https://i.imgur.com/dXFb08o.png)
-1. Application must be set to "treat application as a public client![AzurePortalScreenshot](https://i.imgur.com/ToN6RIT.png)
+You will need to generate an accessKey and an accessSecret to utilize the NiC API. For assistance with this please reach out to your NiC support team.
 
 ### Configuration File
 
 Rename the configuration file from ParametersSample.json to Parameters.json and fill in the following values
 ```
-"client_id": "{YOUR_CLIENT_ID}",
-"group_id": "{YOUR_GROUP_ID}"
+"accessKeyId": "{YOUR_ACCESS_KEY_ID}",
+"accessKeySecret": "{YOUR_ACCESS_KEY_SECRET}"
+"campaignId": "{DESIRED_CAMPAIGNID_TO_END}"
 ```
 
 
